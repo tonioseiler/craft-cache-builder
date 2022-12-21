@@ -26,6 +26,9 @@ use craft\events\RegisterUrlRulesEvent;
 
 use yii\base\Event;
 
+use craft\base\Element;
+use craft\events\ModelEvent;
+
 /**
  * Craft plugins are very much like little applications in and of themselves. We’ve made
  * it as simple as we can, but the training wheels are off. A little prior knowledge is
@@ -106,22 +109,22 @@ class CacheBuilder extends Plugin
         }
 
         // Register our site routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['siteActionTrigger1'] = 'cache-builder/default';
-            }
-        );
+        // Event::on(
+        //     UrlManager::class,
+        //     UrlManager::EVENT_REGISTER_SITE_URL_RULES,
+        //     function (RegisterUrlRulesEvent $event) {
+        //         $event->rules['siteActionTrigger1'] = 'cache-builder/default';
+        //     }
+        // );
 
         // Register our CP routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['cpActionTrigger1'] = 'cache-builder/default/do-something';
-            }
-        );
+        // Event::on(
+        //     UrlManager::class,
+        //     UrlManager::EVENT_REGISTER_CP_URL_RULES,
+        //     function (RegisterUrlRulesEvent $event) {
+        //         $event->rules['cpActionTrigger1'] = 'cache-builder/default/do-something';
+        //     }
+        // );
 
         // Register our utilities
         Event::on(
@@ -140,6 +143,15 @@ class CacheBuilder extends Plugin
                 if ($event->plugin === $this) {
                     // We were just installed
                 }
+            }
+        );
+
+        // this is executed after a elemnt is saved
+        Event::on(
+            Element::class,
+            Element::EVENT_AFTER_SAVE,
+            function (ModelEvent $event) {
+                CacheBuilder::$plugin->cacheBuilderService->buildCacheForElement($event->sender);
             }
         );
 

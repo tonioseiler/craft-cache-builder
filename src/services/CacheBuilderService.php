@@ -16,6 +16,7 @@ use furbo\cachebuilder\jobs\BuildCacheForUrl;
 
 use Craft;
 use craft\base\Component;
+use craft\base\Element;
 use craft\elements\Entry;
 use craft\helpers\Queue;
 
@@ -72,7 +73,7 @@ class CacheBuilderService extends Component
                         ->sectionId($sectionId)
                         ->all();
                     foreach($entries as $entry) {
-                        $this->buildCacheForEntry($entry);
+                        $this->buildCacheForElement($entry);
                         $this->buildCacheForRelations($entry);
                     }
                 }
@@ -93,9 +94,9 @@ class CacheBuilderService extends Component
         return $result;
     }
 
-    public function buildCacheForEntry(Entry $entry)
+    public function buildCacheForElement(Element $element)
     {
-        $url = $entry->getUrl();
+        $url = $element->getUrl();
         if ($url) {
             $job = new BuildCacheForUrl($url);
             Queue::push($job);
@@ -103,11 +104,11 @@ class CacheBuilderService extends Component
 
     }
 
-    public function buildCacheForRelations(Entry $entry)
+    public function buildCacheForRelations(Element $element)
     {
         $entries = Entry::find()
                         ->siteId('*')
-                        ->relatedTo($entry)
+                        ->relatedTo($element)
                         ->all();
         foreach($entries as $entry) {
             $this->buildCacheForEntry($entry);
