@@ -1,0 +1,89 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Cache Builder plugin for Craft CMS 3.x
+ *
+ * Cache Builder Settings.twig
+ *
+ * @author    Furbo GmbH
+ * @copyright Copyright (c) 2022 Furbo GmbH
+ * @link      https://furbo.ch
+ * @package   CacheBuilder
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("furbo\\cachebuilder\\assetbundles\\cachebuilder\\CacheBuilderAsset") %}
+
+{# The content of the CP Section#}
+{% block content %}
+    <div id="fields">
+        <div id="settings" class="cache-builder-settings">
+
+
+            <div class="field">
+                <div class="heading"><label id="settings-activeSections-label" for="settings-activeSections">Rebuild cache for the selected sections</label></div>
+                {# <div id="settings-activeSections-instructions" class="instructions"><p>Please choose..</p></div> #}
+                
+                {% set sites = craft.app.sites.getAllSites() %}
+                {% set sections = craft.app.sections.getAllSections() %}
+                
+                {% for site in sites %}
+                    <h3>{{site.name}}</h3>
+
+                    {% set availableSections = [] %}
+                    {% for section in sections %}
+                        {% if site.id in section.siteIds and section.getConfig().siteSettings[site.uid].hasUrls %}
+                            {% set availableSections = availableSections|merge({
+                                (section.id): {
+                                    label: section.name,
+                                    value: section.id
+                                }
+                            }) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {{ forms.checkboxSelect({
+                        id: 'activeSections['~site.id~']',
+                        name: 'activeSections['~site.id~']',
+                        options: availableSections,
+                        values: settings['activeSections'][site.id] ?? null})
+                    }}
+                    
+                {% endfor %}
+                
+            </div>
+
+            <div class="field">
+                <div class="heading"><label id="settings-options-label" for="settings-options">Options</label></div>
+                <div id="settings-options-instructions" class="instructions"><p>Please choose..</p></div>
+
+                {{ forms.checkboxSelect({
+                    id: 'options',
+                    name: 'options',
+                    options: {
+                        'deleteCacheBeforeRebuilding' : 'Delete cache before rebuilding from cron job.',
+                        'rebuildCacheAfterSave' : 'Rebuild cache after save.'
+                    },
+                    values: settings['options']})
+                }}
+
+            </div>
+
+            <div class="field">
+                {{ forms.textareaField({
+                    label: "Extra Url's"|t('app'),
+                    id: 'extraUrls',
+                    class: 'nicetext',
+                    name: 'extraUrls',
+                    value: settings['extraUrls']
+                }) }}
+
+            </div>
+
+
+        </div>
+    </div>
+{% endblock %}

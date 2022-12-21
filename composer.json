@@ -1,0 +1,44 @@
+{
+    "name": "furbo/cache-builder",
+    "description": "Rebuilds your cache including image transforms",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "cache builder"
+    ],
+    "support": {
+        "docs": "???",
+        "issues": "???"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Furbo GmbH",
+            "homepage": "https://furbo.ch"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^4.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "furbo\\cachebuilder\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Cache Builder",
+        "handle": "cache-builder",
+        "developer": "Furbo GmbH",
+        "developerUrl": "https://furbo.ch",
+        "documentationUrl": "???",
+        "changelogUrl": "???",
+        "components": {
+            "cacheBuilderService": "furbo\\cachebuilder\\services\\CacheBuilderService"
+        },
+        "class": "furbo\\cachebuilder\\CacheBuilder"
+    }
+}
