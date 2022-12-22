@@ -64,7 +64,6 @@ class CacheBuilderService extends Component
             CacheBuilder::$plugin->getInstance()->controllerNamespace = $oldNS;
         }
 
-        //check if image transforms should also be deleted
         foreach ($settings->activeSections as $siteId => $sectionIds) {
             if (!empty($sectionIds)) {
                 foreach ($sectionIds as $sectionId) {
@@ -96,12 +95,14 @@ class CacheBuilderService extends Component
 
     public function buildCacheForElement(Element $element)
     {
-        $url = $element->getUrl();
-        if ($url) {
-            $job = new BuildCacheForUrl($url);
-            Queue::push($job);
+        $site = Craft::$app->sites->getSiteById($element->siteId, true);
+        if ($site->enabled && $element->enabled) {
+            $url = $element->getUrl();
+            if ($url) {
+                $job = new BuildCacheForUrl($url);
+                Queue::push($job);
+            }
         }
-
     }
 
     public function buildCacheForRelations(Element $element)

@@ -151,7 +151,10 @@ class CacheBuilder extends Plugin
             Element::class,
             Element::EVENT_AFTER_SAVE,
             function (ModelEvent $event) {
-                CacheBuilder::$plugin->cacheBuilderService->buildCacheForElement($event->sender);
+                $settings = CacheBuilder::$plugin->getSettings();
+                if (in_array('rebuildCacheAfterSave', $settings->options)) {
+                    CacheBuilder::$plugin->cacheBuilderService->buildCacheForElement($event->sender);
+                }
             }
         );
 
