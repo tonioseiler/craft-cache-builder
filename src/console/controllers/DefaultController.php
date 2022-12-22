@@ -58,6 +58,9 @@ class DefaultController extends Controller
         
         echo "Rebuilding cache queued".PHP_EOL;
 
+        $plugin = CacheBuilder::$plugin->getInstance();
+        
+
     }
 
 }

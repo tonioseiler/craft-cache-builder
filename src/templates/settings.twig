@@ -22,7 +22,6 @@
     <div id="fields">
         <div id="settings" class="cache-builder-settings">
 
-
             <div class="field">
                 <div class="heading"><label id="settings-options-label" for="settings-options">Options</label></div>
 
@@ -35,6 +34,12 @@
                     },
                     values: settings['options']})
                 }}
+
+                <div class="heading"><label id="settings-options-label" for="settings-options">Cron Job</label></div>
+                <p class="instructions">Add the following cronjob on your server:
+                    <br />
+                    php &lt;path-to-your-craft&gt;/craft cache-builder/default/rebuild && php &lt;path-to-your-craft&gt;/craft queue/run
+                </p>
 
             </div>
 

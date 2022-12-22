@@ -46,7 +46,7 @@ class DefaultController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = [];
+    protected array|int|bool $allowAnonymous = [];
 
     // Public Methods
     // =========================================================================
@@ -59,10 +59,9 @@ class DefaultController extends Controller
      */
     
 
-    public function actionRebuildCache()
+    public function actionRebuild()
     {
-        CacheBuilder::$plugin->cacheBuilderService->rebuildCache();
-
-        return 'bla';
+        $this->requirePostRequest();
+        CacheBuilder::$plugin->cacheBuilderService->buildCache();
     }
 }

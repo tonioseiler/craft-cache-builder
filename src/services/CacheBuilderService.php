@@ -19,6 +19,7 @@ use craft\base\Component;
 use craft\base\Element;
 use craft\elements\Entry;
 use craft\helpers\Queue;
+use craft\utilities\ClearCaches;
 
 /**
  * CacheBuilderService Service
@@ -58,10 +59,7 @@ class CacheBuilderService extends Component
         
         //clear data cache
         if (in_array('deleteCacheBeforeRebuilding', $settings->options)) {
-            $oldNS = CacheBuilder::$plugin->getInstance()->controllerNamespace;
-            CacheBuilder::$plugin->getInstance()->controllerNamespace = 'craft\console\controllers';
-            CacheBuilder::$plugin->getInstance()->runAction('clear-caches/data');
-            CacheBuilder::$plugin->getInstance()->controllerNamespace = $oldNS;
+            $this->clearCaches(['data']);
         }
 
         foreach ($settings->activeSections as $siteId => $sectionIds) {
@@ -115,5 +113,30 @@ class CacheBuilderService extends Component
             $this->buildCacheForEntry($entry);
         }
 
+    }
+
+    protected function clearCaches($caches = ['data']) {
+
+        foreach (ClearCaches::cacheOptions() as $cacheOption) {
+            if (is_array($caches) && !in_array($cacheOption['key'], $caches, true)) {
+                continue;
+            }
+            
+            $action = $cacheOption['action'];
+
+            if (is_string($action)) {
+                try {
+                    FileHelper::clearDirectory($action);
+                } catch (InvalidArgumentException) {
+                    // the directory doesn't exist
+                } catch (Throwable $e) {
+                    Craft::warning("Could not clear the directory $action: " . $e->getMessage(), __METHOD__);
+                }
+            } elseif (isset($cacheOption['params'])) {
+                call_user_func_array($action, $cacheOption['params']);
+            } else {
+                $action();
+            }
+        }
     }
 }

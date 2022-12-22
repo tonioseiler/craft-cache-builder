@@ -17,8 +17,13 @@
 
 {% set iconUrl = view.getAssetManager().getPublishedUrl('@furbo/cachebuilder/assetbundles/cachebuilderutilityutility/dist', true) ~ '/img/CacheBuilderUtility-icon.svg' %}
 
-<img src="{{ iconUrl }}" height="64" width="64" />
+{# <img src="{{ iconUrl }}" height="64" width="64" /> #}
 
-<p>Your Utility content goes here</p>
-
-<p>{{ someVar }}</p>
+<p>
+    <form method="post">
+        {{ actionInput('cache-builder/default/rebuild') }}
+        {{ csrfInput() }}
+        {# {{ redirectInput( item.getCpEditUrl() ) }} #}
+        <button type="submit" class="btn submit formsubmit">Build cache</button>
+    </form>
+</p>
