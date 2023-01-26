@@ -1,4 +1,4 @@
-# Cache Builder plugin for Craft CMS 3.x
+# Cache Builder plugin for Craft CMS 4.x
 
 Rebuilds your cache including image transforms
 
