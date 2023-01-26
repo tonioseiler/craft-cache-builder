@@ -49,14 +49,14 @@ class CacheBuilderService extends Component
      *
      * @return mixed
      */
-    
+
 
     public function buildCache()
     {
         $result = 'building cache';
-        
+
         $settings = CacheBuilder::$plugin->getSettings();
-        
+
         //clear data cache
         if (in_array('deleteCacheBeforeRebuilding', $settings->options)) {
             $this->clearCaches(['data']);
@@ -77,16 +77,16 @@ class CacheBuilderService extends Component
             }
         }
 
+        //get forced urls from settings
+        if (!empty($settings->forcedUrls)) {
+            $urls = explode(PHP_EOL,$settings->forcedUrls);
+            $this->buildCacheForUrls($urls);
+        }
+
         //get extra urls from settings
         if (!empty($settings->extraUrls)) {
             $urls = explode(PHP_EOL,$settings->extraUrls);
-            foreach($urls as $url) {
-                if ($url) {
-                    $job = new BuildCacheForUrl($url);
-                    Queue::push($job);
-                }
-            }
-
+            $this->buildCacheForUrls($urls);
         }
         return $result;
     }
@@ -115,13 +115,24 @@ class CacheBuilderService extends Component
 
     }
 
+    public function buildCacheForUrls($urls) {
+        foreach($urls as $url) {
+            $url = trim($url);
+            if ($url) {
+                $job = new BuildCacheForUrl($url);
+                Queue::push($job);
+            }
+        }
+    }
+
+
     protected function clearCaches($caches = ['data']) {
 
         foreach (ClearCaches::cacheOptions() as $cacheOption) {
             if (is_array($caches) && !in_array($cacheOption['key'], $caches, true)) {
                 continue;
             }
-            
+
             $action = $cacheOption['action'];
 
             if (is_string($action)) {

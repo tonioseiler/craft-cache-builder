@@ -40,6 +40,8 @@ class Settings extends Model
 
     public string $extraUrls = "";
 
+    public string $forcedUrls = "";
+
     // Public Methods
     // =========================================================================
 

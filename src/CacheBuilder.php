@@ -21,11 +21,14 @@ use craft\events\PluginEvent;
 use craft\console\Application as ConsoleApplication;
 use craft\web\UrlManager;
 use craft\services\Utilities;
+use craft\services\Elements;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\elements\Entry;
+use craft\elements\Category;
+use craft\helpers\ElementHelper;
 
 use yii\base\Event;
-
 use craft\base\Element;
 use craft\events\ModelEvent;
 
@@ -146,17 +149,35 @@ class CacheBuilder extends Plugin
             }
         );
 
-        // this is executed after a elemnt is saved
+        // this is executed after a entry is saved
         Event::on(
-            Element::class,
-            Element::EVENT_AFTER_SAVE,
+            Entry::class,
+            Entry::EVENT_AFTER_SAVE,
             function (ModelEvent $event) {
-                $settings = CacheBuilder::$plugin->getSettings();
-                if (in_array('rebuildCacheAfterSave', $settings->options)) {
-                    CacheBuilder::$plugin->cacheBuilderService->buildCacheForElement($event->sender);
+                if (
+                    !$event->sender->propagating &&
+                    !ElementHelper::rootElement($event->sender)->isProvisionalDraft &&
+                    !ElementHelper::isRevision($event->sender)
+                ) {
+                    $this->buildCacheAfterSave($event->sender);
                 }
             }
         );
+
+        Event::on(
+            Category::class,
+            Category::EVENT_AFTER_SAVE,
+            function (ModelEvent $event) {
+                if (
+                    ($event->sender->enabled && $event->sender->getEnabledForSite()) &&
+                    !$event->sender->resaving
+                ) {
+                    $this->buildCacheAfterSave($event->sender);
+                }
+            }
+        );
+
+       
 
 /**
  * Logging in Craft involves using one of the following methods:
@@ -213,5 +234,18 @@ class CacheBuilder extends Plugin
                 'settings' => $this->getSettings()
             ]
         );
+    }
+
+    protected function buildCacheAfterSave(Element $element) {
+        $settings = CacheBuilder::$plugin->getSettings();
+        if (in_array('rebuildCacheAfterSave', $settings->options)) {
+            CacheBuilder::$plugin->cacheBuilderService->buildCacheForElement($element);
+
+            //get forced urls from settings
+            if (!empty($settings->forcedUrls)) {
+                $urls = explode(PHP_EOL,$settings->forcedUrls);
+                CacheBuilder::$plugin->cacheBuilderService->buildCacheForUrls($urls);
+            }
+        }
     }
 }
