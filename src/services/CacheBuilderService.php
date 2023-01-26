@@ -72,6 +72,7 @@ class CacheBuilderService extends Component
                     foreach($entries as $entry) {
                         $this->buildCacheForElement($entry);
                         $this->buildCacheForRelations($entry);
+                        echo '.';
                     }
                 }
             }
@@ -110,7 +111,7 @@ class CacheBuilderService extends Component
                         ->relatedTo($element)
                         ->all();
         foreach($entries as $entry) {
-            $this->buildCacheForEntry($entry);
+            $this->buildCacheForElement($entry);
         }
 
     }
