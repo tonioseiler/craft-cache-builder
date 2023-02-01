@@ -46,8 +46,24 @@
             <hr />
 
             <div class="field">
-                <div class="heading"><label id="settings-activeSections-label" for="settings-activeSections">Rebuild cache for the selected sections</label></div>
-                {# <div id="settings-activeSections-instructions" class="instructions"><p>Please choose..</p></div> #}
+                {{ forms.textareaField({
+                    label: "Forced Url's"|t('app'),
+                    id: 'forcedUrls',
+                    class: 'nicetext',
+                    name: 'forcedUrls',
+                    value: settings['forcedUrls']
+                }) }}
+
+                <p class="instructions">The cache of these url's are rebuild after any element is saved.</p>
+
+            </div>
+
+
+            <hr />
+
+            <div class="field">
+                <div class="heading"><label id="settings-activeSections-label" for="settings-activeSections">Sections</label></div>
+                <div id="settings-activeSections-instructions" class="instructions"><p>Cronjob should rebuild cache for the selected sections</p></div>
 
                 {% set sites = craft.app.sites.getAllSites() %}
                 {% set sections = craft.app.sections.getAllSections() %}
@@ -82,22 +98,6 @@
 
             <div class="field">
                 {{ forms.textareaField({
-                    label: "Forced Url's"|t('app'),
-                    id: 'forcedUrls',
-                    class: 'nicetext',
-                    name: 'forcedUrls',
-                    value: settings['forcedUrls']
-                }) }}
-
-                <p class="instructions">The cache of these url's are rebuild after any element is saved.</p>
-
-            </div>
-
-
-            <hr />
-
-            <div class="field">
-                {{ forms.textareaField({
                     label: "Extra Url's"|t('app'),
                     id: 'extraUrls',
                     class: 'nicetext',
@@ -106,7 +106,7 @@
                 }) }}
 
                 <p class="instructions">Add extra url's here. These url's are only rebuild from cronjob.</p>
-
+                
             </div>
 
 
