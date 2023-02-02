@@ -11,8 +11,8 @@
         "cache builder"
     ],
     "support": {
-        "docs": "???",
-        "issues": "???"
+        "docs": "https://github.com/tonioseiler/craft-cache-builder/blob/master/README.md",
+        "issues": "https://github.com/tonioseiler/craft-cache-builder/issues"
     },
     "license": "proprietary",
     "authors": [
