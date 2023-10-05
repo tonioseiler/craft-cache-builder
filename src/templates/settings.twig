@@ -21,55 +21,42 @@
 {% block content %}
     <div id="fields">
         <div id="settings" class="cache-builder-settings">
+            
+            <h2>Configuration</h2>
+            <hr />
 
             <div class="field">
-                <div class="heading"><label id="settings-options-label" for="settings-options">Options</label></div>
+
+                <h3>Options</h3>
+                <!-- <div class="heading"><label id="settings-options-label" for="settings-options">Options</label></div> -->
+
+                <br />
 
                 {{ forms.checkboxSelect({
                     id: 'options',
                     name: 'options',
                     options: {
-                        'deleteCacheBeforeRebuilding' : 'Delete cache before rebuilding from cron job.',
-                        'rebuildCacheAfterSave' : 'Rebuild cache after save.'
+                        'rebuildCacheAfterSave' : 'Rebuild cache after save.',
+                        'deleteCacheBeforeRebuilding' : 'Delete cache before rebuilding from cron job.'
                     },
                     values: settings['options']})
                 }}
 
-                <div class="heading"><label id="settings-options-label" for="settings-options">Cron Job</label></div>
-                <p class="instructions">Add the following cronjob on your server:
-                    <br />
-                    php &lt;path-to-your-craft&gt;/craft cache-builder/default/rebuild && php &lt;path-to-your-craft&gt;/craft queue/run
-                </p>
-
             </div>
 
             <hr />
 
             <div class="field">
-                {{ forms.textareaField({
-                    label: "Forced Url's"|t('app'),
-                    id: 'forcedUrls',
-                    class: 'nicetext',
-                    name: 'forcedUrls',
-                    value: settings['forcedUrls']
-                }) }}
 
-                <p class="instructions">The cache of these url's are rebuild after any element is saved.</p>
-
-            </div>
-
-
-            <hr />
-
-            <div class="field">
-                <div class="heading"><label id="settings-activeSections-label" for="settings-activeSections">Sections</label></div>
-                <div id="settings-activeSections-instructions" class="instructions"><p>Cronjob should rebuild cache for the selected sections</p></div>
+                <h3>Sections</h3>
+                <!--<div class="heading"><label id="settings-activeSections-label" for="settings-activeSections">Sections</label></div>-->
+                <div id="settings-activeSections-instructions" class="instructions"><p>Rebuild cache for the selected sections</p></div>
 
                 {% set sites = craft.app.sites.getAllSites() %}
                 {% set sections = craft.app.sections.getAllSections() %}
 
                 {% for site in sites %}
-                    <h3>{{site.name}}</h3>
+                    <h4>{{site.name}}</h4>
 
                     {% set availableSections = [] %}
                     {% for section in sections %}
@@ -98,15 +85,36 @@
 
             <div class="field">
                 {{ forms.textareaField({
+                    label: "Forced Url's"|t('app'),
+                    id: 'forcedUrls',
+                    class: 'nicetext',
+                    name: 'forcedUrls',
+                    value: settings['forcedUrls'],
+                    instructions: 'The cache of these url\'s are rebuild after any element is saved.'
+                }) }}
+            </div>
+
+            <div class="field">
+                {{ forms.textareaField({
                     label: "Extra Url's"|t('app'),
                     id: 'extraUrls',
                     class: 'nicetext',
                     name: 'extraUrls',
-                    value: settings['extraUrls']
+                    value: settings['extraUrls'],
+                    instructions: 'These url\'s are rebuild from the cronjob.'
                 }) }}
-
-                <p class="instructions">Add extra url's here. These url's are only rebuild from cronjob.</p>
                 
+            </div>
+
+            <hr />
+
+            <div class="field">
+                <div class="heading"><label id="settings-options-label" for="settings-options">Cron Job</label></div>
+                    <p class="instructions">To rebuild the cache from a cron job, add the following jon on your server
+                        <br />
+                        php &lt;path-to-your-craft&gt;/craft cache-builder/default/rebuild && php &lt;path-to-your-craft&gt;/craft queue/run
+                    </p>
+                </div>
             </div>
 
 

@@ -239,7 +239,22 @@ class CacheBuilder extends Plugin
     protected function buildCacheAfterSave(Element $element) {
         $settings = CacheBuilder::$plugin->getSettings();
         if (in_array('rebuildCacheAfterSave', $settings->options)) {
-            CacheBuilder::$plugin->cacheBuilderService->buildCacheForElement($element);
+
+            //check if section is enabled
+            $settings = CacheBuilder::$plugin->getSettings();
+        
+            $activeSections = [];
+            foreach ($settings->activeSections as $siteId => $sectionIds) {
+                if (!empty($sectionIds)) {
+                    foreach ($sectionIds as $sectionId) {
+                        $activeSections[] = $sectionId;
+                    }
+                }
+            }
+
+            if (in_array($element->sectionId, $activeSections)) {
+                CacheBuilder::$plugin->cacheBuilderService->buildCacheForElement($element);
+            }
 
             //get forced urls from settings
             if (!empty($settings->forcedUrls)) {
